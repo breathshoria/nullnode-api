@@ -1,5 +1,5 @@
 export default () => ({
-    port: process.env.PORT|| 3000,
+    port: process.env.PORT || 3000,
     database: {
         name: process.env.POSTGRES_DATABASE,
         host: process.env.POSTGRES_HOST,

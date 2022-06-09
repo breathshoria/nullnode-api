@@ -7,12 +7,14 @@ import {ConfigModule} from '@nestjs/config';
 import configuration from "./config/configuration";
 import {TypeOrmConfigService} from './config/db.service';
 
+const env = process.env.NODE_ENV
 
 @Module({
     imports: [
         ConfigModule.forRoot({
             load: [configuration],
-            isGlobal: true
+            isGlobal: true,
+            envFilePath: env === 'prod' ? '.env' : `.env.${env}`
         }),
         TypeOrmModule.forRootAsync({useClass: TypeOrmConfigService}),
         ProjectsModule,],
