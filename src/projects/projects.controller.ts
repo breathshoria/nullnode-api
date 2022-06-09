@@ -1,7 +1,17 @@
-import {Controller, Get, Post, Req, Res, HttpCode, Redirect, Param, Body, UsePipes, ValidationPipe} from "@nestjs/common";
+import {
+    Controller,
+    Get,
+    Post,
+    HttpCode,
+    Param,
+    Body,
+    UsePipes,
+    ValidationPipe,
+    Delete
+} from "@nestjs/common";
 import {ProjectsService} from "./projects.service";
 import {AddProjectDto} from "./dto/add-project.dto";
-import { Request, Response } from 'express';
+import {UpdateProjectDto} from "./dto/update-project.dto"
 import {Project} from "./entities/project.entity";
 
 @Controller('projects')
@@ -21,7 +31,21 @@ export class ProjectsController {
     @UsePipes(new ValidationPipe({
         transform: true,
     }))
-    async addProject(@Body() addProjectDto: AddProjectDto): Promise<Project> {
-        return this.projectsService.addProject(addProjectDto)
+    async addProject(@Body() addProjectDto: AddProjectDto): Promise<void> {
+        await this.projectsService.addProject(addProjectDto)
+    }
+
+    @Post('updateProject')
+    @HttpCode(200)
+    @UsePipes(new ValidationPipe({
+        transform: true,
+    }))
+    async updateProject(@Body() updateProjectDto: UpdateProjectDto): Promise<void> {
+        await this.projectsService.updateProject(updateProjectDto)
+    }
+
+    @Delete('deleteProject/:id')
+    async deleteProject(@Param('id') id): Promise<void> {
+        await this.projectsService.deleteProject(id)
     }
 }
