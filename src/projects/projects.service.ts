@@ -1,34 +1,47 @@
-import {Injectable} from '@nestjs/common';
-import {InjectRepository} from '@nestjs/typeorm';
-import {Project} from "./entities/project.entity";
-import {Repository} from 'typeorm';
-import {AddProjectDto} from "./dto/add-project.dto";
+import {Injectable, NotFoundException} from '@nestjs/common';
+import {PrismaService} from '../prisma.service';
+import {Project, Prisma} from '@prisma/client';
 import {UpdateProjectDto} from "./dto/update-project.dto";
+import {AddProjectDto} from "./dto/add-project.dto";
+
 
 @Injectable()
 export class ProjectsService {
-    constructor(
-        @InjectRepository(Project)
-        private projectsRepository: Repository<Project>,
-    ) {
+    constructor(private prisma: PrismaService) {
     }
 
     async getProjects(): Promise<Project[]> {
-        return this.projectsRepository.find()
+        return this.prisma.project.findMany()
     }
 
-    async getProject(id: string): Promise<Project> {
-        return this.projectsRepository.findOne({where: {id : id}})
+    async getProject(id: number): Promise<Project> {
+        const project = await this.prisma.project.findUnique({
+            where: {
+                id: id
+            }
+        })
+        if (!project) {
+            throw new NotFoundException()
+        }
+        return project;
     }
 
     async addProject(body: AddProjectDto): Promise<Project> {
-        return this.projectsRepository.save(body)
+        return this.prisma.project.create({data: body})
     }
 
     async updateProject(body: UpdateProjectDto): Promise<void> {
-        await this.projectsRepository.update(body.id, body)
+        await this.prisma.project.update({
+            where: {id: body.id},
+            data: body
+        })
     }
-    async deleteProject(id: string): Promise<void> {
-        await this.projectsRepository.delete(id)
+
+    async deleteProject(id: number): Promise<void> {
+        try {
+            await this.prisma.project.delete({where: {id}})
+        } catch {
+            throw new NotFoundException()
+        }
     }
 }

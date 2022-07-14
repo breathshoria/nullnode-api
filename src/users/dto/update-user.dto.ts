@@ -1,6 +1,6 @@
 import {IsString, IsBoolean, IsNotEmpty} from 'class-validator'
 
-export class UpdateProjectDto {
+export class UpdateUserDto {
     @IsNotEmpty()
     id: number;
 
