@@ -2,13 +2,12 @@ import {
     Controller,
     Get,
     Post,
-    HttpCode,
-    Param,
     Request,
+    Res,
     Body,
     UsePipes,
     ValidationPipe,
-    Delete, ParseArrayPipe, UseGuards
+    UseGuards
 } from "@nestjs/common";
 import {UsersService} from "./users.service";
 import {AddProjectsDto} from "./dto/add-projects.dto";
@@ -16,6 +15,8 @@ import {RegisterUserDto} from "./dto/register-user.dto";
 import {User} from '@prisma/client';
 import {LocalAuthGuard} from "../auth/local-auth.guard";
 import {JwtAuthGuard} from "../auth/jwt-auth.guard";
+import {RefreshTokenDto} from "./dto/refresh-token.dto";
+import {Response} from "express";
 
 @Controller('users')
 export class UsersController {
@@ -36,8 +37,14 @@ export class UsersController {
 
     @UseGuards(LocalAuthGuard)
     @Post('login')
-    async login(@Request() req) {
-        return this.userService.login(req.user)
+    async login(@Request() req, @Res({ passthrough: true }) res: Response) {
+        const {accessToken} = await this.userService.login(req.user);
+        res.cookie('accessToken', accessToken)
+    }
+
+    @Post('refreshToken')
+    async refreshToken(@Body() body: RefreshTokenDto) {
+        return this.userService.refreshToken(body)
     }
 
     @Post('subscribeProjects')

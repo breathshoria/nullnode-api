@@ -1,12 +1,11 @@
-import {Injectable, NotFoundException, Request, UseGuards, Inject, forwardRef} from '@nestjs/common';
-import {LocalAuthGuard} from "../auth/local-auth.guard";
+import {Injectable, NotFoundException, Inject, forwardRef} from '@nestjs/common';
 import {PrismaService} from "../prisma.service";
-import {User, Project, Prisma} from '@prisma/client';
-import {UpdateUserDto} from "./dto/update-user.dto";
+import {User} from '@prisma/client';
 import {RegisterUserDto} from "./dto/register-user.dto";
 import {AddProjectsDto} from "./dto/add-projects.dto";
 import * as bcrypt from 'bcrypt';
 import {AuthService} from "../auth/auth.service";
+import {RefreshTokenDto} from "./dto/refresh-token.dto";
 
 
 @Injectable()
@@ -59,5 +58,20 @@ export class UsersService {
         }
     }
 
+    async refreshToken(body: RefreshTokenDto) {
+        return this.authService.refreshToken(body.username, body.refreshToken)
+    }
 
+    async addRefreshToken(username: string, refreshToken: string): Promise<void> {
+        try {
+            await this.prisma.user.update({
+                where: {username: username},
+                data: {
+                    refreshToken: refreshToken
+                }
+            })
+        } catch (e) {
+            throw new NotFoundException();
+        }
+    }
 }
