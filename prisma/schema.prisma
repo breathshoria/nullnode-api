@@ -22,9 +22,10 @@ model Project {
 }
 
 model User {
-   id    Int     @default(autoincrement()) @id
-   email String  @unique
-   name  String?
+   id       Int     @default(autoincrement()) @id
+   email    String  @unique
+   username String  @unique
+   password String
    projects Project[]
 }
 
