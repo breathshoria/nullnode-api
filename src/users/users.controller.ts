@@ -15,7 +15,6 @@ import {RegisterUserDto} from "./dto/register-user.dto";
 import {User} from '@prisma/client';
 import {LocalAuthGuard} from "../auth/local-auth.guard";
 import {JwtAuthGuard} from "../auth/jwt-auth.guard";
-import {RefreshTokenDto} from "./dto/refresh-token.dto";
 import {Response} from "express";
 
 @Controller('users')
@@ -25,9 +24,9 @@ export class UsersController {
     ) {}
 
     @UseGuards(JwtAuthGuard)
-    @Get()
-    async getUsers(): Promise<User[]> {
-        return this.userService.getUsers();
+    @Get('getUser')
+    async getUser(@Request() req) {
+        return req.user;
     }
 
     @Post('signup')
@@ -38,13 +37,13 @@ export class UsersController {
     @UseGuards(LocalAuthGuard)
     @Post('login')
     async login(@Request() req, @Res({ passthrough: true }) res: Response) {
-        const {accessToken} = await this.userService.login(req.user);
-        res.cookie('accessToken', accessToken)
+        return this.userService.login(req.user)
     }
 
-    @Post('refreshToken')
-    async refreshToken(@Body() body: RefreshTokenDto) {
-        return this.userService.refreshToken(body)
+    @UseGuards(JwtAuthGuard)
+    @Get('refreshToken')
+    async refreshToken(@Request() req) {
+        return this.userService.refreshToken(req.user.username)
     }
 
     @Post('subscribeProjects')

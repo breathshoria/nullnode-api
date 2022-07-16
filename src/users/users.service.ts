@@ -5,7 +5,6 @@ import {RegisterUserDto} from "./dto/register-user.dto";
 import {AddProjectsDto} from "./dto/add-projects.dto";
 import * as bcrypt from 'bcrypt';
 import {AuthService} from "../auth/auth.service";
-import {RefreshTokenDto} from "./dto/refresh-token.dto";
 
 
 @Injectable()
@@ -37,7 +36,6 @@ export class UsersService {
         })
     }
 
-
     async login(user: User) {
         return this.authService.login(user)
     }
@@ -58,8 +56,8 @@ export class UsersService {
         }
     }
 
-    async refreshToken(body: RefreshTokenDto) {
-        return this.authService.refreshToken(body.username, body.refreshToken)
+    async refreshToken(username: string) {
+        return this.authService.refreshToken(username)
     }
 
     async addRefreshToken(username: string, refreshToken: string): Promise<void> {
