@@ -2,12 +2,12 @@ import {
     Controller,
     Get,
     Post,
-    Request,
     Res,
+    Req,
     Body,
     UsePipes,
     ValidationPipe,
-    UseGuards
+    UseGuards, Headers
 } from "@nestjs/common";
 import {UsersService} from "./users.service";
 import {AddProjectsDto} from "./dto/add-projects.dto";
@@ -15,7 +15,17 @@ import {RegisterUserDto} from "./dto/register-user.dto";
 import {User} from '@prisma/client';
 import {LocalAuthGuard} from "../auth/local-auth.guard";
 import {JwtAuthGuard} from "../auth/jwt-auth.guard";
-import {Response} from "express";
+import {Response, Request} from "express";
+
+interface UserRequest extends Request {
+    user: {
+        username: string;
+        userId: number;
+    }
+    cookies: {
+        refreshToken: string;
+    }
+}
 
 @Controller('users')
 export class UsersController {
@@ -25,7 +35,7 @@ export class UsersController {
 
     @UseGuards(JwtAuthGuard)
     @Get('getUser')
-    async getUser(@Request() req) {
+    async getUser(@Req() req) {
         return req.user;
     }
 
@@ -36,14 +46,23 @@ export class UsersController {
 
     @UseGuards(LocalAuthGuard)
     @Post('login')
-    async login(@Request() req, @Res({ passthrough: true }) res: Response) {
-        return this.userService.login(req.user)
+    async login(@Req() req, @Res({ passthrough: true }) res: Response) {
+        const {refreshToken, ...result} = await this.userService.login(req.user);
+        res.cookie('refreshToken', refreshToken);
+        return result
     }
 
     @UseGuards(JwtAuthGuard)
+    @Get('logout')
+    async logout(@Req() req) {
+        return this.userService.logout(req.user.username)
+    }
+
+
     @Get('refreshToken')
-    async refreshToken(@Request() req) {
-        return this.userService.refreshToken(req.user.username)
+    async refreshToken(@Req() req: UserRequest, @Headers('Authorization') headers) {
+        const accessToken = headers.split(' ')[1]
+        return this.userService.refreshToken(accessToken, req.cookies.refreshToken)
     }
 
     @Post('subscribeProjects')

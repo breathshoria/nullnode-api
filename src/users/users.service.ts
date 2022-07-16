@@ -24,6 +24,10 @@ export class UsersService {
         return this.prisma.user.findUnique({where: {username}})
     }
 
+    async  getUserByToken(accessToken: string): Promise<User> {
+        return this.prisma.user.findUnique({where: {accessToken}})
+    }
+
     async signUp(body: RegisterUserDto): Promise<User> {
         const saltRounds = 10;
         const hash = await bcrypt.hash(body.password, saltRounds)
@@ -36,8 +40,19 @@ export class UsersService {
         })
     }
 
-    async login(user: User) {
+    async login(user: User): Promise<any> {
         return this.authService.login(user)
+    }
+
+    async logout(username: string): Promise<void> {
+        await this.prisma.user.update({
+            where: {
+                username
+            },
+            data: {
+                accessToken: null
+            }
+        })
     }
 
     async addProject(body: AddProjectsDto): Promise<void> {
@@ -56,16 +71,16 @@ export class UsersService {
         }
     }
 
-    async refreshToken(username: string) {
-        return this.authService.refreshToken(username)
+    async refreshToken(accessToken: string, refreshToken: string) {
+        return this.authService.refreshToken(accessToken, refreshToken)
     }
 
-    async addRefreshToken(username: string, refreshToken: string): Promise<void> {
+    async addAccessToken(username: string, accessToken: string): Promise<void> {
         try {
             await this.prisma.user.update({
                 where: {username: username},
                 data: {
-                    refreshToken: refreshToken
+                    accessToken: accessToken
                 }
             })
         } catch (e) {
