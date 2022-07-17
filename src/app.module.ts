@@ -5,9 +5,11 @@ import {ProjectsModule} from "./projects/projects.module";
 import {ConfigModule} from '@nestjs/config';
 import configuration from "./config/configuration";
 import {UsersModule} from './users/users.module';
+import {ServeStaticModule} from "@nestjs/serve-static";
+import {join} from 'path';
 
+console.log(join(__dirname, '..', 'public'))
 const env = process.env.NODE_ENV
-
 @Module({
     imports: [
         ProjectsModule,
@@ -16,6 +18,9 @@ const env = process.env.NODE_ENV
             load: [configuration],
             isGlobal: true,
             envFilePath: env === 'prod' ? '.env' : `.env.${env}`
+        }),
+        ServeStaticModule.forRoot({
+            rootPath: join(__dirname, '..', 'public'),
         }),
     ],
     controllers: [AppController],
