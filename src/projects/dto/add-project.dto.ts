@@ -1,4 +1,4 @@
-import {IsNotEmpty, IsString, IsBoolean } from 'class-validator'
+import {IsNotEmpty, IsString, IsBooleanString} from 'class-validator'
 
 export class AddProjectDto {
     @IsNotEmpty()
@@ -10,10 +10,12 @@ export class AddProjectDto {
     startDate: string;
 
     @IsNotEmpty()
-    @IsBoolean()
+    @IsBooleanString()
     onGoing: boolean;
 
     @IsNotEmpty()
     @IsString()
     description: string;
+
+    logo: any;
 }

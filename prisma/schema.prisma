@@ -17,6 +17,7 @@ model Project {
   title        String   @db.VarChar(255)
   startDate    String
   onGoing      Boolean  @default(true)
+  logo         String?
   description  String?
   participants User[]
 }
