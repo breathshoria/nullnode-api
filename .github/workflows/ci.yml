@@ -31,7 +31,7 @@ jobs:
       - name: Generate Prisma schema
         run: npx prisma generate
       - name: Start Postgres Docker container
-        run: docker run --rm --name $POSTGRES_NAME -e POSTGRES_DB=POSTGRES_DB -e POSTGRES_USER=POSTGRES_USER -e POSTGRES_PASSWORD=POSTGRES_PASSWORD -p 5432:5432 -d postgres
+        run: docker run --rm --name $POSTGRES_NAME -e POSTGRES_DB=$POSTGRES_DB -e POSTGRES_USER=$POSTGRES_USER -e POSTGRES_PASSWORD=$POSTGRES_PASSWORD -p 5432:5432 -d postgres
       - name: Wait for Postgres
         run: until docker exec $POSTGRES_NAME pg_isready; do sleep 5; done
       - name: Run migrations
