@@ -1,0 +1,44 @@
+name: nullnode-api ci
+
+on:
+  pull_request:
+    branches:
+      - '*'
+  push:
+    branches:
+      - master
+
+env:
+  DATABASE_URL: postgres://username:password@localhost:5432/nullnode
+  POSTGRES_NAME: postgres
+  POSTGRES_USER: username
+  POSTGRES_PASSWORD: password 
+  POSTGRES_DB: nullnode
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v2
+      - name: Use Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16.13.1'
+      - name: Install packages
+        run: npm install
+      - name: Generate Prisma schema
+        run: npx prisma generate
+      - name: Start Postgres Docker container
+        run: docker run --rm --name $POSTGRES_NAME -e POSTGRES_DB=POSTGRES_DB -e POSTGRES_USER=POSTGRES_USER -e POSTGRES_PASSWORD=POSTGRES_PASSWORD -p 5432:5432 -d postgres
+      - name: Wait for Postgres
+        run: until docker exec $POSTGRES_NAME pg_isready; do sleep 5; done
+      - name: Run migrations
+        run: npx prisma migrate deploy
+      - name: Run tests
+        run: npm run test
+        env:
+          NODE_OPTIONS: --max_old_space_size=8192
+      - name: Stop Docker
+        run: docker stop $POSTGRES_NAME
