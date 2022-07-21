@@ -2,11 +2,15 @@ FROM node:16-buster as dev
 
 WORKDIR /usr/src/app
 
-COPY package*.json ./
+COPY --chown=node:node  package*.json ./
 
 RUN npm ci
 
-COPY . .
+COPY --chown=node:node  . .
+
+RUN chown -R node:node ./node_modules
+
+USER node
 
 FROM node:16-buster as build
 
