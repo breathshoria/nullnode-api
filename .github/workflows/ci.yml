@@ -30,7 +30,7 @@ jobs:
       - name: Start Postgres Docker container
         run: docker-compose -f docker-compose.test.yml up -d
       - name: Wait for Postgres
-        run: until docker-compose exec $POSTGRES_NAME pg_isready; do sleep 5; done
+        run: until docker-compose exec -T $POSTGRES_NAME pg_isready; do sleep 5; done
       - name: Run migrations
         run: npx prisma migrate deploy
       - name: Run tests
