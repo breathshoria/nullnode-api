@@ -20,7 +20,7 @@
     "test": "jest",
     "pretest:local": "npm run docker:restart && dotenv -e .env.test npm run migrate:dev",
     "docker:restart": "docker-compose down && docker-compose -f docker-compose.test.yml up -d && sleep 1",
-    "test:local": "dotenv -e .env.test -- jest && npm run pretest:local",
+    "test:local": "dotenv -e .env.test -- jest",
     "posttest": "docker-compose down",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
