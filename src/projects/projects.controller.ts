@@ -57,7 +57,7 @@ export class ProjectsController {
         })) file: Express.Multer.File
 
     ): Promise<void> {
-        body.logo = file.originalname;
+        body.logo = file.filename;
         body.onGoing = Boolean(body.onGoing);
         await this.projectsService.addProject(body)
     }
