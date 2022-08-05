@@ -16,9 +16,17 @@ model Project {
   updatedAt    DateTime @updatedAt
   title        String   @db.VarChar(255)
   startDate    String
+  website      String?
+  github       String?
+  discord      String?
+  telegram     String?
   onGoing      Boolean  @default(true)
   logo         String?
-  description  String?
+  description  String
+  summary      String
+  involvement  String
+  stage        String
+  guide        String?
   participants User[]
 }
 

@@ -17,5 +17,34 @@ export class AddProjectDto {
     @IsString()
     description: string;
 
+    @IsNotEmpty()
+    @IsString()
+    summary: string;
+
+    @IsNotEmpty()
+    @IsString()
+    involvement: string;
+
+    @IsNotEmpty()
+    @IsString()
+    stage: string;
+
+
+    @IsString()
+    guide: string;
+
     logo: any;
+
+    @IsString()
+    website: string;
+
+    @IsString()
+    github: string;
+
+    @IsString()
+    telegram: string;
+
+    @IsString()
+    discord: string;
+
 }
