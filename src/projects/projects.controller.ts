@@ -51,24 +51,40 @@ export class ProjectsController {
         @Body() body: AddProjectDto,
         @UploadedFile(new ParseFilePipe({
             validators: [
-                new MaxFileSizeValidator({ maxSize: 10 * 1024 * 1024 }),
-                new FileTypeValidator({ fileType: '(jpg|jpeg|png)' }),
+                new MaxFileSizeValidator({maxSize: 10 * 1024 * 1024}),
+                new FileTypeValidator({fileType: '(jpg|jpeg|png)'}),
             ]
         })) file: Express.Multer.File
-
     ): Promise<void> {
-        body.logo = file.filename;
+        body.logoUrl = file.filename;
         body.onGoing = Boolean(body.onGoing);
         await this.projectsService.addProject(body)
     }
 
     @Post('updateProject')
-    @HttpCode(200)
+    @UseInterceptors(FileInterceptor('logo', {
+        storage: diskStorage({
+            destination: './public',
+            filename: editFileName
+        })
+    }))
     @UsePipes(new ValidationPipe({
         transform: true,
     }))
-    async updateProject(@Body() updateProjectDto: UpdateProjectDto): Promise<void> {
-        await this.projectsService.updateProject(updateProjectDto)
+    async updateProject(
+        @Body() body: UpdateProjectDto,
+        @UploadedFile(new ParseFilePipe({
+            fileIsRequired: false,
+            validators: [
+                new MaxFileSizeValidator({maxSize: 10 * 1024 * 1024}),
+                new FileTypeValidator({fileType: '(jpg|jpeg|png)'}),
+            ],
+        })) file: Express.Multer.File
+    ): Promise<void> {
+        if (file) {
+            body.logoUrl = file.filename;
+        }
+        await this.projectsService.updateProject(body);
     }
 
     @Delete('deleteProject/:id')

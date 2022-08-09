@@ -33,7 +33,7 @@ export class AddProjectDto {
     @IsString()
     guide: string;
 
-    logo: any;
+    logoUrl: any;
 
     @IsString()
     website: string;

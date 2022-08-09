@@ -21,7 +21,7 @@ model Project {
   discord      String?
   telegram     String?
   onGoing      Boolean  @default(true)
-  logo         String?
+  logoUrl      String?
   description  String
   summary      String
   involvement  String

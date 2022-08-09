@@ -31,9 +31,10 @@ export class ProjectsService {
     }
 
     async updateProject(body: UpdateProjectDto): Promise<void> {
+        const {id, ...project} = body;
         await this.prisma.project.update({
-            where: {id: body.id},
-            data: body
+            where: {id},
+            data: project
         })
     }
 
