@@ -11,7 +11,11 @@ export class ProjectsService {
     }
 
     async getProjects(): Promise<Project[]> {
-        return this.prisma.project.findMany()
+        return this.prisma.project.findMany({
+            orderBy: {
+               onGoing: 'desc'
+            }
+        })
     }
 
     async getProject(id: number): Promise<Project> {
@@ -32,6 +36,7 @@ export class ProjectsService {
 
     async updateProject(body: UpdateProjectDto): Promise<void> {
         const {id, ...project} = body;
+        console.log(project)
         await this.prisma.project.update({
             where: {id},
             data: project
