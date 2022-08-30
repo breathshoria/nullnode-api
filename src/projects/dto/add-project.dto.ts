@@ -1,4 +1,5 @@
-import {IsNotEmpty, IsString, IsBooleanString} from 'class-validator'
+import {IsNotEmpty, IsString, IsBooleanString, IsBoolean} from 'class-validator'
+import {Transform} from "class-transformer";
 
 export class AddProjectDto {
     @IsNotEmpty()
@@ -10,7 +11,8 @@ export class AddProjectDto {
     startDate: string;
 
     @IsNotEmpty()
-    @IsBooleanString()
+    @IsBoolean()
+    @Transform(({value}) => JSON.parse(value))
     onGoing: boolean;
 
     @IsNotEmpty()
