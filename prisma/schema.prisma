@@ -39,5 +39,6 @@ model User {
    password String
    accessToken String? @unique
    projects Project[]
+   roles String[]
 }
 
