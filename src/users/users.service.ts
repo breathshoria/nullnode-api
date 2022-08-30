@@ -24,7 +24,7 @@ export class UsersService {
         return this.prisma.user.findUnique({where: {username}})
     }
 
-    async  getUserByToken(accessToken: string): Promise<User> {
+    async getUserByToken(accessToken: string): Promise<User> {
         return this.prisma.user.findUnique({where: {accessToken}})
     }
 
@@ -36,6 +36,7 @@ export class UsersService {
                 username: body.username,
                 password: hash,
                 email: body.email,
+                roles: ['default']
             }
         })
     }
