@@ -16,7 +16,7 @@ export class UpdateProjectDto {
 
     @IsNotEmpty()
     @IsBoolean()
-    @Transform(({value}) => Boolean(value))
+    @Transform(({value}) => JSON.parse(value))
     onGoing: boolean;
 
     @IsNotEmpty()
