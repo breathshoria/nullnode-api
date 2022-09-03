@@ -1,4 +1,4 @@
-import {forwardRef, Injectable, Inject, UnauthorizedException, ForbiddenException} from '@nestjs/common';
+import {forwardRef, Injectable, Inject, UnauthorizedException} from '@nestjs/common';
 import {UsersService} from "../users/users.service";
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt'
@@ -26,36 +26,48 @@ export class AuthService {
 
     async login(user: any) {
         const payload = {username: user.username, sub: user.id}
-        const accessToken = this.jwtService.sign(payload)
-        if (!user.accessToken) {
-            await this.userService.addAccessToken(user.username, accessToken)
-        }
+
+        const accessToken = this.jwtService.sign(payload);
+        const tokenExpiration = Date.now() + +this.config.get<string>('accessJwtExpire');
         const refreshToken = this.jwtService.sign(payload, {
-            expiresIn: this.config.get<string>('refreshJwtExpire'),
+            expiresIn: this.config.get<number>('refreshJwtExpire'),
             secret: this.config.get<string>('refreshJwtSecret')
         })
+        await this.userService.addRefreshToken(user.username, refreshToken)
+
         return {
             username: user.username,
             accessToken: accessToken,
             refreshToken: refreshToken,
             roles: user.roles,
+            expiresIn: tokenExpiration,
         }
     }
 
-    async refreshToken(accessToken: string, refreshToken: string): Promise<any> {
-        const user = await this.userService.getUserByToken(accessToken);
+    async refreshToken(refreshToken: string): Promise<any> {
+        const user = await this.userService.getUserByToken(refreshToken);
         if (!user) throw new UnauthorizedException();
+        const payload = {username: user.username, sub: user.id}
         try {
             await this.jwtService.verify(refreshToken, {
                 secret: this.config.get<string>('refreshJwtSecret')
             })
-            const payload = {username: user.username, sub: user.id}
-            const accessToken = this.jwtService.sign(payload);
-            await this.userService.addAccessToken(user.username, accessToken)
+
+            const newAccessToken = this.jwtService.sign(payload);
+            const tokenExpiration = Date.now() + +this.config.get<string>('accessJwtExpire');
+
+            const newRefreshToken = this.jwtService.sign(payload, {
+                expiresIn: this.config.get<string>('refreshJwtExpire'),
+                secret: this.config.get<string>('refreshJwtSecret')
+            })
+            await this.userService.addRefreshToken(user.username, newRefreshToken)
+
             return {
-                accessToken: accessToken
+                accessToken: newAccessToken,
+                refreshToken: newRefreshToken,
+                expiresIn: tokenExpiration
             }
-        } catch {
+        } catch (err) {
             throw new UnauthorizedException();
         }
     }

@@ -16,6 +16,7 @@ import {User} from '@prisma/client';
 import {LocalAuthGuard} from "../auth/local-auth.guard";
 import {JwtAuthGuard} from "../auth/jwt-auth.guard";
 import {Response, Request} from "express";
+import {RefreshTokenDto} from "./dto/refresh-token.dto";
 
 interface UserRequest extends Request {
     user: {
@@ -31,12 +32,13 @@ interface UserRequest extends Request {
 export class UsersController {
     constructor(
         private userService: UsersService,
-    ) {}
+    ) {
+    }
 
     @UseGuards(JwtAuthGuard)
     @Get('getUser')
     async getUser(@Req() req) {
-        return req.user;
+        return this.userService.getUser(req.user.username)
     }
 
     @Post('signup')
@@ -46,10 +48,8 @@ export class UsersController {
 
     @UseGuards(LocalAuthGuard)
     @Post('login')
-    async login(@Req() req, @Res({ passthrough: true }) res: Response) {
-        const {refreshToken, ...result} = await this.userService.login(req.user);
-        res.cookie('refreshToken', refreshToken);
-        return result
+    async login(@Req() req, @Res({passthrough: true}) res: Response) {
+        return await this.userService.login(req.user);
     }
 
     @UseGuards(JwtAuthGuard)
@@ -59,10 +59,14 @@ export class UsersController {
     }
 
 
-    @Get('refreshToken')
-    async refreshToken(@Req() req: UserRequest, @Headers('Authorization') headers) {
-        const accessToken = headers.split(' ')[1]
-        return this.userService.refreshToken(accessToken, req.cookies.refreshToken)
+    @Post('refreshToken')
+    async refreshToken(
+        @Req() req: UserRequest,
+        @Body() body: RefreshTokenDto,
+    ) {
+        const {refreshToken} = body;
+        return await this.userService.refreshToken(refreshToken);
+
     }
 
     @Post('subscribeProjects')

@@ -24,8 +24,8 @@ export class UsersService {
         return this.prisma.user.findUnique({where: {username}})
     }
 
-    async getUserByToken(accessToken: string): Promise<User> {
-        return this.prisma.user.findUnique({where: {accessToken}})
+    async getUserByToken(refreshToken: string): Promise<User> {
+        return this.prisma.user.findUnique({where: {refreshToken}})
     }
 
     async signUp(body: RegisterUserDto): Promise<User> {
@@ -51,7 +51,7 @@ export class UsersService {
                 username
             },
             data: {
-                accessToken: null
+                refreshToken: null
             }
         })
     }
@@ -72,16 +72,16 @@ export class UsersService {
         }
     }
 
-    async refreshToken(accessToken: string, refreshToken: string) {
-        return this.authService.refreshToken(accessToken, refreshToken)
+    async refreshToken(refreshToken: string) {
+        return this.authService.refreshToken(refreshToken)
     }
 
-    async addAccessToken(username: string, accessToken: string): Promise<void> {
+    async addRefreshToken(username: string, refreshToken: string): Promise<void> {
         try {
             await this.prisma.user.update({
                 where: {username: username},
                 data: {
-                    accessToken: accessToken
+                    refreshToken
                 }
             })
         } catch (e) {
