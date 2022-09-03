@@ -2,7 +2,6 @@ import {
     Controller,
     Get,
     Post,
-    HttpCode,
     Param,
     Body,
     UsePipes,
@@ -11,7 +10,7 @@ import {
     ParseFilePipe,
     MaxFileSizeValidator,
     FileTypeValidator,
-    Delete, ParseIntPipe, UploadedFile
+    Delete, ParseIntPipe, UploadedFile, UseGuards
 } from "@nestjs/common";
 import {FileInterceptor} from "@nestjs/platform-express";
 import {ProjectsService} from "./projects.service";
@@ -20,7 +19,9 @@ import {UpdateProjectDto} from "./dto/update-project.dto"
 import {Project} from '@prisma/client';
 import {diskStorage} from "multer";
 import editFileName from "../../utils/editFileName";
-
+import {RolesGuard} from "../guards/roles.guard";
+import {Roles} from "../decorators/roles.decorator";
+import {JwtAuthGuard} from "../auth/jwt-auth.guard";
 
 @Controller('projects')
 export class ProjectsController {
@@ -37,6 +38,8 @@ export class ProjectsController {
         return this.projectsService.getProject(id);
     }
 
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @Roles('admin')
     @Post('addProject')
     @UseInterceptors(FileInterceptor('logo', {
         storage: diskStorage({
