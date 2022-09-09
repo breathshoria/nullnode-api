@@ -1,4 +1,4 @@
-import {IsNotEmpty, IsArray, IsEmail} from 'class-validator'
+import {IsNotEmpty} from 'class-validator'
 
 class ProjectId {
     id: number;
@@ -6,9 +6,5 @@ class ProjectId {
 
 export class AddProjectsDto {
     @IsNotEmpty()
-    @IsEmail()
-    email: string;
-
-    @IsArray()
     projectsId: ProjectId[];
 }

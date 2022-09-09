@@ -69,11 +69,9 @@ export class UsersController {
 
     }
 
-    @Post('subscribeProjects')
-    @UsePipes(new ValidationPipe({
-        transform: true
-    }))
-    async subscribeProjects(@Body() body: AddProjectsDto): Promise<void> {
-        return this.userService.addProject(body)
+    @UseGuards(JwtAuthGuard)
+    @Post('subscribeProject')
+    async subscribeProjects(@Body() body: AddProjectsDto, @Req() req): Promise<void> {
+        return this.userService.addProject(req.user.userId, body)
     }
 }

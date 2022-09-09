@@ -21,7 +21,10 @@ export class UsersService {
     }
 
     async getUser(username: string): Promise<User> {
-        return this.prisma.user.findUnique({where: {username}})
+        return this.prisma.user.findUnique({
+            where: {username},
+            include: {projects: true}
+        })
     }
 
     async getUserByToken(refreshToken: string): Promise<User> {
@@ -56,10 +59,10 @@ export class UsersService {
         })
     }
 
-    async addProject(body: AddProjectsDto): Promise<void> {
+    async addProject(userId: number, body: AddProjectsDto): Promise<void> {
         try {
             await this.prisma.user.update({
-                where: {email: body.email},
+                where: {id: userId},
                 data: {
                     projects: {
                         connect: body.projectsId
@@ -68,6 +71,7 @@ export class UsersService {
 
             });
         } catch (e) {
+            console.log(e)
             throw e;
         }
     }
