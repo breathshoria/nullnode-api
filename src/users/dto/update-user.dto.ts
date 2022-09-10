@@ -1,18 +1,18 @@
-import {IsString, IsBoolean, IsNotEmpty} from 'class-validator'
+import { IsString, IsBoolean, IsNotEmpty } from 'class-validator';
 
 export class UpdateUserDto {
-    @IsNotEmpty()
-    id: number;
+  @IsNotEmpty()
+  id: number;
 
-    @IsString()
-    title: string;
+  @IsString()
+  title: string;
 
-    @IsString()
-    startDate: string;
+  @IsString()
+  startDate: string;
 
-    @IsBoolean()
-    onGoing: boolean;
+  @IsBoolean()
+  onGoing: boolean;
 
-    @IsString()
-    description: string;
+  @IsString()
+  description: string;
 }

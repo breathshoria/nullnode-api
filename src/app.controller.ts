@@ -9,6 +9,7 @@ export class AppController {
   getHello(): string {
     return this.appService.getHello();
   }
+
   @Get('getList')
   getList(): Array<object> {
     return this.appService.getList();

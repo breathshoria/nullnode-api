@@ -8,9 +8,10 @@ async function bootstrap() {
     origin: true,
     preflightContinue: false,
     optionsSuccessStatus: 200,
-    credentials:true,
+    credentials: true,
   });
   app.use(cookieParser());
   await app.listen(process.env.PORT);
 }
+
 bootstrap();

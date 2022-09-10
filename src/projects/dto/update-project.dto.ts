@@ -1,54 +1,54 @@
-import {IsString, IsNotEmpty, IsBooleanString, IsNumber, IsNumberString, IsBoolean} from 'class-validator'
-import {Transform} from "class-transformer";
+import { IsString, IsNotEmpty, IsBoolean } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 export class UpdateProjectDto {
-    @IsNotEmpty()
-    @Transform(({value}) => parseInt(value))
-    id: number;
+  @IsNotEmpty()
+  @Transform(({ value }) => parseInt(value))
+  id: number;
 
-    @IsNotEmpty()
-    @IsString()
-    title: string;
+  @IsNotEmpty()
+  @IsString()
+  title: string;
 
-    @IsNotEmpty()
-    @IsString()
-    startDate: string;
+  @IsNotEmpty()
+  @IsString()
+  startDate: string;
 
-    @IsNotEmpty()
-    @IsBoolean()
-    @Transform(({value}) => JSON.parse(value))
-    onGoing: boolean;
+  @IsNotEmpty()
+  @IsBoolean()
+  @Transform(({ value }) => JSON.parse(value))
+  onGoing: boolean;
 
-    @IsNotEmpty()
-    @IsString()
-    description: string;
+  @IsNotEmpty()
+  @IsString()
+  description: string;
 
-    @IsNotEmpty()
-    @IsString()
-    summary: string;
+  @IsNotEmpty()
+  @IsString()
+  summary: string;
 
-    @IsNotEmpty()
-    @IsString()
-    involvement: string;
+  @IsNotEmpty()
+  @IsString()
+  involvement: string;
 
-    @IsNotEmpty()
-    @IsString()
-    stage: string;
+  @IsNotEmpty()
+  @IsString()
+  stage: string;
 
-    @IsString()
-    guide: string;
+  @IsString()
+  guide: string;
 
-    logoUrl: any;
+  logoUrl: any;
 
-    @IsString()
-    website: string;
+  @IsString()
+  website: string;
 
-    @IsString()
-    github: string;
+  @IsString()
+  github: string;
 
-    @IsString()
-    telegram: string;
+  @IsString()
+  telegram: string;
 
-    @IsString()
-    discord: string;
+  @IsString()
+  discord: string;
 }

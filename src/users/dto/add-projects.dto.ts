@@ -1,10 +1,10 @@
-import {IsNotEmpty} from 'class-validator'
+import { IsNotEmpty } from 'class-validator';
 
 class ProjectId {
-    id: number;
+  id: number;
 }
 
 export class AddProjectsDto {
-    @IsNotEmpty()
-    projectsId: ProjectId[];
+  @IsNotEmpty()
+  projectsId: ProjectId[];
 }
