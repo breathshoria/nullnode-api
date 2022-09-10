@@ -7,7 +7,7 @@ import {
 import { PrismaService } from '../prisma.service';
 import { User } from '@prisma/client';
 import { RegisterUserDto } from './dto/register-user.dto';
-import { AddProjectsDto } from './dto/add-projects.dto';
+import { UpdateSubscriptionDto } from './dto/subscribe-projects.dto';
 import * as bcrypt from 'bcrypt';
 import { AuthService } from '../auth/auth.service';
 
@@ -58,13 +58,35 @@ export class UsersService {
     });
   }
 
-  async addProject(userId: number, body: AddProjectsDto): Promise<void> {
+  async subscribeProjects(
+    userId: number,
+    body: UpdateSubscriptionDto,
+  ): Promise<void> {
     try {
       await this.prisma.user.update({
         where: { id: userId },
         data: {
           projects: {
-            connect: body.projectsId,
+            connect: body.projectId,
+          },
+        },
+      });
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
+  }
+
+  async unsubscribeProjects(
+    userId: number,
+    body: UpdateSubscriptionDto,
+  ): Promise<void> {
+    try {
+      await this.prisma.user.update({
+        where: { id: userId },
+        data: {
+          projects: {
+            disconnect: body.projectId,
           },
         },
       });

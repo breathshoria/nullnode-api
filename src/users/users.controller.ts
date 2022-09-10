@@ -5,13 +5,10 @@ import {
   Res,
   Req,
   Body,
-  UsePipes,
-  ValidationPipe,
   UseGuards,
-  Headers,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { AddProjectsDto } from './dto/add-projects.dto';
+import { UpdateSubscriptionDto } from './dto/subscribe-projects.dto';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { User } from '@prisma/client';
 import { LocalAuthGuard } from '../auth/local-auth.guard';
@@ -63,11 +60,20 @@ export class UsersController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post('subscribeProject')
+  @Post('subscribe')
   async subscribeProjects(
-    @Body() body: AddProjectsDto,
+    @Body() body: UpdateSubscriptionDto,
     @Req() req,
   ): Promise<void> {
-    return this.userService.addProject(req.user.userId, body);
+    return this.userService.subscribeProjects(req.user.userId, body);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('unsubscribe')
+  async unsubscribeProjects(
+    @Body() body: UpdateSubscriptionDto,
+    @Req() req,
+  ): Promise<void> {
+    return this.userService.unsubscribeProjects(req.user.userId, body);
   }
 }
