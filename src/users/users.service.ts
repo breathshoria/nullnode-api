@@ -19,10 +19,6 @@ export class UsersService {
     private authService: AuthService,
   ) {}
 
-  async getUsers(): Promise<User[]> {
-    return this.prisma.user.findMany();
-  }
-
   async getUser(username: string): Promise<User> {
     return this.prisma.user.findUnique({
       where: { username },
