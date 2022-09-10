@@ -4,7 +4,7 @@ class ProjectId {
   id: number;
 }
 
-export class AddProjectsDto {
+export class UpdateSubscriptionDto {
   @IsNotEmpty()
-  projectsId: ProjectId[];
+  projectId: ProjectId;
 }
