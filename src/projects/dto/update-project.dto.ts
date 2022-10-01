@@ -6,11 +6,10 @@ export class UpdateProjectDto {
   @Transform(({ value }) => parseInt(value))
   id: number;
 
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'Title should be not empty' })
   @IsString()
   title: string;
 
-  @IsNotEmpty()
   @IsString()
   startDate: string;
 
@@ -19,19 +18,16 @@ export class UpdateProjectDto {
   @Transform(({ value }) => JSON.parse(value))
   onGoing: boolean;
 
-  @IsNotEmpty()
   @IsString()
   description: string;
 
-  @IsNotEmpty()
   @IsString()
   summary: string;
 
-  @IsNotEmpty()
   @IsString()
   involvement: string;
 
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'Project stage should be not empty' })
   @IsString()
   stage: string;
 

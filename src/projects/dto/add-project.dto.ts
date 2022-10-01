@@ -2,11 +2,10 @@ import { IsNotEmpty, IsString, IsBoolean } from 'class-validator';
 import { Transform } from 'class-transformer';
 
 export class AddProjectDto {
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'Title should be not empty' })
   @IsString()
   title: string;
 
-  @IsNotEmpty()
   @IsString()
   startDate: string;
 
@@ -15,19 +14,16 @@ export class AddProjectDto {
   @Transform(({ value }) => JSON.parse(value))
   onGoing: boolean;
 
-  @IsNotEmpty()
   @IsString()
   description: string;
 
-  @IsNotEmpty()
   @IsString()
   summary: string;
 
-  @IsNotEmpty()
   @IsString()
   involvement: string;
 
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'Project stage should be not empty' })
   @IsString()
   stage: string;
 
